@@ -150,4 +150,24 @@ class AuthController extends Controller
             'data' => $user
         ]);
     }
+
+    //update latlong user
+
+    public function updateLatlong(Request $request)
+    {
+        $request->validate([
+            'latlong' => 'required|string',
+
+        ]);
+
+        $user = $request->user();
+        $user->latlong = $request->latlong;
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Latlong Updated succesfully',
+            'data' => $user
+        ]);
+    }
 }
