@@ -24,3 +24,8 @@ Route::post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout'
 
 //update latlong
 Route::put('/user/update-latlong', [App\Http\Controllers\Api\AuthController::class, 'updateLatLong'])->middleware('auth:sanctum');
+
+//get all restaurant
+Route::get('/restaurant', [App\Http\Controllers\Api\AuthController::class, 'getRestaurant']);
+
+Route::apiResource('/products', App\Http\Controllers\Api\ProductController::class)->middleware('auth:sanctum');
