@@ -13,6 +13,26 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            //user_id
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            //restaurant_id
+            $table->foreignId('restaurant_id')->constrained('users')->onDelete('cascade');
+            //driver_id
+            $table->foreignId('driver_id')->constrained('users')->onDelete('set null');
+            //total price
+            $table->integer('total_price');
+            //shipping_cost
+            $table->integer('shipping_cost');
+            //total bill
+            $table->integer('total_bill');
+            //payment method
+            $table->string('payment_method');
+            //status
+            $table->string('status')->default('pending');
+            //shipping address
+            $table->text('shipping_address');
+            //shipping latlong
+            $table->string('shipping_latlong');
             $table->timestamps();
         });
     }
