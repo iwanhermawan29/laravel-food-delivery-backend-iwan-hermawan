@@ -18,7 +18,7 @@ return new class extends Migration
             //restaurant_id
             $table->foreignId('restaurant_id')->constrained('users')->onDelete('cascade');
             //driver_id
-            $table->foreignId('driver_id')->constrained('users')->onDelete('set null');
+            $table->foreignId('driver_id')->nullable()->constrained('users')->onDelete('set null');
             //total price
             $table->integer('total_price');
             //shipping_cost
@@ -26,13 +26,13 @@ return new class extends Migration
             //total bill
             $table->integer('total_bill');
             //payment method
-            $table->string('payment_method');
+            $table->string('payment_method')->nullable();
             //status
             $table->string('status')->default('pending');
             //shipping address
-            $table->text('shipping_address');
+            $table->text('shipping_address')->nullable();
             //shipping latlong
-            $table->string('shipping_latlong');
+            $table->string('shipping_latlong')->nullable();
             $table->timestamps();
         });
     }

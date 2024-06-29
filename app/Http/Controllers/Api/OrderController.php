@@ -22,6 +22,14 @@ class OrderController extends Controller
             'shipping_cost' =>  'required|integer',
         ]);
 
+        $totalPrice = 0;
+        foreach ($request->order_items as $item) {
+            $product = Product::find($item['product_id']);
+            $totalPrice += $product->price * $item['quantity'];
+        }
+
+        $totalBill = $totalPrice + $request->shipping_cost;
+
         $user = $request->user();
         $data = $request->all();
         $data['user_id'] = $user->id;
@@ -30,17 +38,22 @@ class OrderController extends Controller
         $shippingLatLong = $user->latlong;
         $data['shipping_latlong'] = $shippingLatLong;
         $data['status'] = 'pending';
+        $data['total_price'] = $totalPrice;
+        $data['total_bill'] = $totalBill;
+        $data['driver_id'] = $request->input('driver_id'); // tambahkan ini
 
         $order = Order::create($data);
 
         foreach ($request->order_items as $item) {
             $product = Product::find($item['product_id']);
             $orderItem = new OrderItem([
+                'product_id' => $product->id,
+                'order_id' => $order->id,
                 'quantity' => $item['quantity'],
                 'price' => $product->price,
 
             ]);
-            $order->items()->save($orderItem);
+            $order->orderItems()->save($orderItem);
         }
 
         return response()->json([
@@ -120,7 +133,7 @@ class OrderController extends Controller
     public function updateOrderStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|string|in:pending,processing,completed,cancelled, ready_for_delivery, prepared',
+            'status' => 'required|string|in:pending,processing,completed,cancelled,ready_for_delivery,prepared',
         ]);
 
         $order = Order::find($id);
@@ -138,7 +151,7 @@ class OrderController extends Controller
     public function getOrderByStatusDriver(Request $request)
     {
         $request->validate([
-            'status' => 'required|string|in:pending,processing,completed,cancelled, ready_for_delivery, prepared',
+            'status' => 'required|string|in:pending,processing,completed,cancelled,ready_for_delivery,prepared',
         ]);
 
         $user = $request->user();
@@ -172,7 +185,7 @@ class OrderController extends Controller
     public function UpdateOrderStatusDriver(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|string|in:pending,processing,completed,cancelled, on_the_way, delivered',
+            'status' => 'required|string|in:pending,processing,completed,cancelled,on_the_way,delivered',
         ]);
 
         $order = Order::find($id);
